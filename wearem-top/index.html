@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WEAR'EM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Noto+Sans+JP:wght@400;500&display=swap">
+<style>
+  /*
+    レイアウト：Illustratorのアートボード（幅1440px）を基準にした1カラム。
+    PC幅では --u（＝画面幅 / 1440）を掛けてデザインの数値をそのまま再現し、
+    スマホ幅（〜767px）では縦積みのレイアウトに切り替える。
+    配色はデザインのウォームグレー1色で固定（ダークモードでも同じ見た目）。
+  */
+  :root {
+    --bg: #d8d6d1;          /* アートボード背景 */
+    --ink: #000000;         /* 見出し・本文 */
+    --ink-soft: #1d1d1b;    /* 補足テキスト */
+    --btn: #000000;         /* START TRY-ON ボタン */
+    --btn-ink: #ffffff;
+    --card-top: #f9ffff;    /* ガラス風カード：上 */
+    --card-bottom: #dcedf8; /* ガラス風カード：下 */
+    --card-edge: #ffffff;
+    --note: #ed1e79;        /* 注釈（デザインの注釈色） */
+    --menu-bg: rgba(255, 255, 255, .35);  /* メニュー：白・透明度35% */
+    --menu-ink: #000000;
+
+    --font-latin: Arial, Arimo, "Helvetica Neue", Helvetica, sans-serif;
+    --font-ja: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+
+    --u: calc(min(100vw, 1440px) / 1440);   /* デザイン上の 1px */
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ja);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .page {
+    position: relative;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-bottom: calc(213 * var(--u));
+  }
+
+  /* ---------- HERO（写真＋ロゴ） ---------- */
+  .hero {
+    position: relative;
+    height: calc(730 * var(--u));
+  }
+  .hero__photo {
+    position: absolute;
+    left: calc(40 * var(--u));
+    top: calc(152 * var(--u));
+    width: calc(1147 * var(--u));
+    height: calc(572 * var(--u));
+    max-width: none;
+    object-fit: fill;              /* 原案の縦横比を再現 */
+    user-select: none;
+    pointer-events: none;
+  }
+  .hero__logo,
+  .hero__tagline {
+    position: absolute;
+    margin: 0;
+    font-family: var(--font-latin);
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    transform-origin: left top;
+  }
+  .hero__logo {
+    left: calc(631 * var(--u));
+    top: calc(125 * var(--u));
+    font-size: calc(369 * var(--u));
+    letter-spacing: 0;
+    transform: scaleX(.283);
+  }
+  .hero__tagline {
+    left: calc(802 * var(--u));
+    top: calc(455 * var(--u));
+    font-size: calc(66 * var(--u));
+    transform: scaleX(.49);
+  }
+
+  /* ---------- MENU ---------- */
+  .menu-btn {
+    position: absolute;
+    z-index: 31;
+    left: calc(36 * var(--u));
+    top: calc(43 * var(--u));
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+    font-family: var(--font-latin);
+    font-weight: 400;
+    font-size: calc(60 * var(--u));
+    line-height: 1;
+    transform: scaleX(.47);
+    transform-origin: left top;
+  }
+  .menu-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+  .menu {
+    position: fixed;
+    z-index: 30;
+    left: 0; right: 0; top: 0;
+    padding: calc(env(safe-area-inset-top, 0px) + max(20px, calc(120 * var(--u)))) clamp(16px, calc(36 * var(--u)), 40px) clamp(18px, calc(36 * var(--u)), 32px);
+    background: var(--menu-bg);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    transform: translateY(-100%);
+    transition: transform .35s ease, visibility 0s linear .35s;
+    visibility: hidden;
+  }
+  .menu.is-open {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform .35s ease, visibility 0s;
+  }
+  .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: clamp(24px, calc(80 * var(--u)), 80px);
+  }
+  .menu a {
+    display: inline-block;
+    color: var(--menu-ink);
+    text-decoration: none;
+    font-family: var(--font-latin);
+    font-weight: 700;
+    font-size: clamp(30px, calc(72 * var(--u)), 72px);
+    line-height: 1;
+    transform: scaleX(.52);
+    transform-origin: left center;
+    white-space: nowrap;
+  }
+  .menu li { width: clamp(80px, calc(200 * var(--u)), 200px); }
+  .menu a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+  .menu a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+  .menu a small {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--font-ja);
+    font-weight: 400;
+    font-size: 12px;
+    transform: scaleX(1.92);       /* 親の長体を打ち消す */
+    transform-origin: left top;
+  }
+
+  /* ---------- アイテムカード（横スクロール） ---------- */
+  .items {
+    position: relative;
+    margin-top: calc(13 * var(--u));
+  }
+  .items__track {
+    display: flex;
+    gap: calc(7 * var(--u));
+    padding-inline: calc(17 * var(--u));
+    padding-block: calc(4 * var(--u)) calc(14 * var(--u));
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: calc(17 * var(--u));
+    scrollbar-width: none;
+    cursor: grab;
+    list-style: none;
+    margin: 0;
+  }
+  .items__track::-webkit-scrollbar { display: none; }
+  .items__track.is-dragging { cursor: grabbing; scroll-snap-type: none; }
+  .items__track.is-dragging .card { pointer-events: none; }
+
+  .items__track > li {
+    flex: 0 0 calc(295 * var(--u));
+    scroll-snap-align: start;
+  }
+  .card {
+    width: 100%;
+    height: calc(221 * var(--u));
+    border-radius: calc(53 * var(--u));
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--card-bottom) 100%);
+    box-shadow:
+      inset 0 0 0 calc(2 * var(--u)) var(--card-edge),
+      inset 0 calc(10 * var(--u)) calc(18 * var(--u)) rgba(255, 255, 255, .7),
+      0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(120, 140, 160, .18);
+    display: grid;
+    place-items: center;
+    color: transparent;
+    text-decoration: none;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .card:hover {
+    transform: translateY(calc(-4 * var(--u)));
+    box-shadow:
+      inset 0 0 0 calc(2 * var(--u)) var(--card-edge),
+      inset 0 calc(10 * var(--u)) calc(18 * var(--u)) rgba(255, 255, 255, .7),
+      0 calc(10 * var(--u)) calc(22 * var(--u)) rgba(120, 140, 160, .25);
+  }
+  .card:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  /* ---------- CONCEPT ---------- */
+  .concept {
+    position: relative;
+    padding-left: calc(190 * var(--u));
+    margin-top: calc(147 * var(--u));
+  }
+  .concept__text { min-width: 0; max-width: calc(660 * var(--u)); position: relative; z-index: 1; }
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-latin);
+    font-weight: 700;
+    font-size: calc(80 * var(--u));
+    line-height: 1;
+    letter-spacing: 0;
+    margin-left: calc(-110 * var(--u));   /* CONCEPTだけ左に出す */
+  }
+  .concept__title {
+    margin: calc(30 * var(--u)) 0 0;
+    font-weight: 400;
+    font-size: calc(86.75 * var(--u));
+    line-height: 1;
+    letter-spacing: -.02em;
+    white-space: nowrap;
+    transform: scaleX(.668);
+    transform-origin: left center;
+    width: calc(100% / .668);
+  }
+  .concept__sub {
+    margin: calc(36 * var(--u)) 0 0;
+    font-weight: 400;
+    font-size: calc(34.7 * var(--u));
+    line-height: 1.2;
+    letter-spacing: -.04em;
+  }
+  .concept__body {
+    margin-top: calc(14 * var(--u));
+    font-size: calc(23.13 * var(--u));
+    line-height: 1.2;               /* 27.76px */
+    letter-spacing: -.06em;
+    transform: scaleX(.74);
+    transform-origin: left top;
+    width: calc(100% / .74);
+  }
+  .concept__body p { margin: 0; }
+  .concept__body p + p { margin-top: 1.2em; }
+
+  /* 3Dアニメーション用の領域（今は空）。注釈表示ONで枠が見える */
+  .stage-3d {
+    position: relative;
+    border-radius: calc(67 * var(--u));
+  }
+  .stage-3d--1 {
+    position: absolute;
+    left: calc(871 * var(--u));
+    top: calc(40 * var(--u));
+    width: calc(464 * var(--u));
+    height: calc(614 * var(--u));
+  }
+  .stage-3d--2 {
+    position: absolute;
+    left: calc(42 * var(--u));
+    top: calc(1454 * var(--u));
+    width: calc(519 * var(--u));
+    height: calc(519 * var(--u));
+    z-index: 0;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    margin-top: calc(100 * var(--u));
+    text-align: center;
+  }
+  .about__title {
+    margin: 0;
+    font-family: var(--font-latin);
+    font-weight: 700;
+    font-size: calc(45 * var(--u));
+    line-height: 1;
+  }
+  .about__notes {
+    margin: calc(36 * var(--u)) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: calc(16 * var(--u));
+    line-height: 1.5;
+    color: var(--ink-soft);
+    display: grid;
+    gap: calc(14 * var(--u));
+  }
+  .cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(722 * var(--u));
+    height: calc(97 * var(--u));
+    margin: calc(42 * var(--u)) auto 0;
+    border-radius: 999px;
+    background: var(--btn);
+    color: var(--btn-ink);
+    text-decoration: none;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+  .cta span {
+    display: inline-block;
+    font-family: var(--font-latin);
+    font-weight: 700;
+    font-size: calc(68 * var(--u));
+    line-height: 1;
+    transform: scaleX(.72);
+    white-space: nowrap;
+  }
+  .cta:hover { transform: scale(1.02); opacity: .88; }
+  .cta:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+
+  /* ---------- 注釈レイヤー（確認用） ---------- */
+  .note-toggle {
+    position: fixed;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    z-index: 10;
+    font: 600 12px/1 var(--font-ja);
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--note);
+    background: var(--bg);
+    color: var(--note);
+    cursor: pointer;
+  }
+  .note-toggle[aria-pressed="true"] { background: var(--note); color: #fff; }
+  .note-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .note { display: none; }
+  .show-notes .stage-3d { outline: 1.5px dashed var(--note); outline-offset: -1px; }
+  .show-notes .note {
+    display: block;
+    position: absolute;
+    z-index: 5;
+    font: 500 12px/1.45 var(--font-ja);
+    color: var(--note);
+    background: rgba(216, 214, 209, .92);
+    padding: 4px 8px;
+    border-radius: 6px;
+    max-width: 260px;
+  }
+  .stage-3d .note { left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .cta-wrap { position: relative; }
+  .cta-wrap .note { right: 0; top: calc(100% + 8px); }
+  .items .note { left: 16px; top: -26px; }
+
+  /* ---------- スマホ（〜767px） ---------- */
+  @media (max-width: 767px) {
+    :root { --u: calc(100vw / 1440); }
+    .page { padding-bottom: 96px; }
+    .items { margin-top: 8px; }
+    .items__track {
+      gap: 10px;
+      padding-inline: 16px;
+      scroll-padding-inline: 16px;
+      padding-block: 4px 12px;
+    }
+    .items__track > li { flex-basis: 46vw; }
+    .card {
+      height: calc(46vw * 221 / 295);
+      border-radius: 24px;
+    }
+    .menu-btn { font-size: 26px; left: 16px; top: 14px; }
+    .menu { padding: calc(env(safe-area-inset-top, 0px) + 56px) 16px 20px; }
+    .menu ul { flex-direction: column; gap: 18px; }
+    .eyebrow { margin-left: 0; }
+    .concept {
+      display: block;
+      padding-inline: 20px;
+      margin-top: 36px;
+    }
+    .eyebrow { font-size: 28px; }
+    .concept__title { font-size: 40px; margin-top: 18px; }
+    .concept__sub { font-size: 17px; margin-top: 16px; }
+    .concept__body { font-size: 15px; line-height: 1.6; margin-top: 12px; letter-spacing: -.02em; transform: scaleX(.86); width: calc(100% / .86); }
+    .concept__text { max-width: none; }
+    .stage-3d--1 {
+      position: relative;
+      left: auto;
+      top: auto;
+      width: 100%;
+      height: 260px;
+      margin-top: 28px;
+      border-radius: 28px;
+    }
+    .stage-3d--2 { display: none; }
+    .about {
+      width: auto;
+      margin: 48px 20px 0;
+    }
+    .about__title { font-size: 18px; }
+    .about__notes { font-size: 12px; margin-top: 18px; gap: 8px; }
+    .cta {
+      width: 100%;
+      max-width: 420px;
+      height: 56px;
+      margin-top: 32px;
+    }
+    .cta span { font-size: 34px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .cta { transition: none; }
+    .card:hover, .cta:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  // ページを開いたら必ず一番上から表示する（前のページのスクロール位置を引き継がない）
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  function toTop() { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body && (document.body.scrollTop = 0); }
+  toTop();
+  window.addEventListener('DOMContentLoaded', toTop);
+  window.addEventListener('load', () => { toTop(); requestAnimationFrame(toTop); });
+  window.addEventListener('pageshow', toTop);
+</script>
+
+<div class="page" id="page">
+
+  <!-- MENU -->
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">MENU</button>
+  <nav class="menu" id="menu" aria-label="メニュー">
+    <ul>
+      <li><a href="02-tryon-caution.html">TRY ON<small>試着する</small></a></li>
+      <li><a href="items.html">ITEMS<small>アイテム一覧</small></a></li>
+      <li><a href="about.html">ABOUT<small>このサイトについて</small></a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <img class="hero__photo" src="assets/hero-ears.webp" alt="さまざまな形と肌の色の耳の写真" width="1536" height="1024">
+    <h1 class="hero__logo">WEAR’EM</h1>
+    <p class="hero__tagline">virtual try-on for ear jewelry</p>
+  </header>
+
+  <!-- ITEMS：横スクロール -->
+  <section class="items" aria-label="アイテム">
+    <span class="note">【横スクロール】ドラッグ／スワイプで左右に移動</span>
+    <ul class="items__track" id="itemTrack">
+      <li><a class="card" href="#" aria-label="アイテム (i)">(i)</a></li>
+      <li><a class="card" href="#" aria-label="アイテム (ii)">(ii)</a></li>
+      <li><a class="card" href="#" aria-label="アイテム (iii)">(iii)</a></li>
+      <li><a class="card" href="#" aria-label="アイテム (iv)">(iv)</a></li>
+      <li><a class="card" href="#" aria-label="アイテム (v)">(v)</a></li>
+      <li><a class="card" href="#" aria-label="アイテム (vi)">(vi)</a></li>
+    </ul>
+  </section>
+
+  <!-- CONCEPT -->
+  <section class="concept" aria-labelledby="conceptTitle">
+    <div class="concept__text">
+      <p class="eyebrow">CONCEPT</p>
+      <h2 class="concept__title" id="conceptTitle">着けた姿を、買う前に。</h2>
+      <p class="concept__sub">耳の形状認識によるイヤーカフのAR試着</p>
+      <div class="concept__body">
+        <p>耳のかたちは、人によってちがう。<br>
+          だからイヤーカフの見え方も、人によってちがうはず。<br>
+          カメラをかざすだけで、耳の輪郭を読み取り<br>
+          あなたの耳に合った位置でアクセサリーを試着できるWebシステムです。</p>
+        <p>画面での試着と商品詳細を確認したらそのまま購入も。<br>
+          アクセサリーのオンラインショッピングを、より身近に。<br>
+          （アプリのインストールは不要です。）</p>
+      </div>
+    </div>
+    <div class="stage-3d stage-3d--1" id="stage3d1" aria-hidden="true">
+      <span class="note">(1) のちに挿入予定<br>3Dモデルを用いたアニメーションエフェクト</span>
+    </div>
+  </section>
+
+  <div class="stage-3d stage-3d--2" id="stage3d2" aria-hidden="true">
+    <span class="note">(2) のちに挿入予定<br>3Dモデルを用いたアニメーションエフェクト</span>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about" aria-labelledby="aboutTitle">
+    <h2 class="about__title" id="aboutTitle">ABOUT THIS WEBSITE</h2>
+    <ul class="about__notes">
+      <li>本サイトは国際基督教大学 卒業研究の一環として制作したものです。</li>
+      <li>カメラの映像は端末内でのみ処理され、外部に送信・保存されません。</li>
+    </ul>
+    <div class="cta-wrap">
+      <a class="cta" href="02-tryon-caution.html"><span>START TRY-ON</span></a>
+      <span class="note">【クリック】試着画面（02-tryon-caution）に移動</span>
+    </div>
+  </section>
+</div>
+
+<button class="note-toggle" id="noteToggle" type="button" aria-pressed="false">注釈を表示</button>
+
+<script>
+  // 横スクロール：マウスでもドラッグできるようにする
+  (function () {
+    const track = document.getElementById('itemTrack');
+    let startX = 0, startLeft = 0, moved = false, down = false;
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      down = true; moved = false;
+      startX = e.clientX; startLeft = track.scrollLeft;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) { moved = true; track.classList.add('is-dragging'); }
+      track.scrollLeft = startLeft - dx;
+    });
+    window.addEventListener('pointerup', () => {
+      if (!down) return;
+      down = false;
+      track.classList.remove('is-dragging');
+    });
+    track.addEventListener('click', (e) => {
+      if (moved) { e.preventDefault(); moved = false; }
+      else if (e.target.closest('.card')) e.preventDefault(); // 商品詳細ページ未作成のため
+    });
+  })();
+
+  // MENU：押すと上からメニューが出る。もう一度押す／Esc／外側を押すと閉じる
+  (function () {
+    const btn = document.getElementById('menuBtn');
+    const menu = document.getElementById('menu');
+    const set = (open) => {
+      menu.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = open ? 'CLOSE' : 'MENU';
+      btn.style.position = open ? 'fixed' : '';
+    };
+    btn.addEventListener('click', () => set(!menu.classList.contains('is-open')));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+    document.addEventListener('click', (e) => {
+      if (menu.classList.contains('is-open') && !menu.contains(e.target) && e.target !== btn) set(false);
+    });
+  })();
+
+  // 注釈の表示切り替え（デザイン確認用）
+  (function () {
+    const btn = document.getElementById('noteToggle');
+    const page = document.getElementById('page');
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      btn.textContent = on ? '注釈を隠す' : '注釈を表示';
+      page.classList.toggle('show-notes', on);
+    });
+  })();
+</script>
+
+</body>
+</html>

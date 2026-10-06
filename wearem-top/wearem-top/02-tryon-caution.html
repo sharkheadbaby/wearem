@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WEAR'EM ご試着の前に</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Noto+Sans+JP:wght@400;500&display=swap">
+<style>
+  /*
+    レイアウト：中央1カラム（幅802px）。白い角丸パネル2枚＋黒ボタン。
+    トップページ（index.html）と同じ色・フォント・ボタンを使う。
+  */
+  :root {
+    --bg: #d8d6d1;
+    --panel: #ffffff;
+    --ink: #000000;
+    --ink-sub: #6c6b69;     /* コツの補足テキスト */
+    --btn: #000000;
+    --btn-ink: #ffffff;
+    --note: #ed1e79;
+
+    --font-latin: Arial, Arimo, "Helvetica Neue", Helvetica, sans-serif;
+    --font-ja: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ja);
+    -webkit-font-smoothing: antialiased;
+    padding: calc(56px + env(safe-area-inset-top, 0px)) clamp(24px, 8vw, 120px) calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+  img { max-width: 100%; }
+
+  .page {
+    position: relative;
+    max-width: 591px;
+    margin-inline: auto;
+    overflow-x: clip;   /* 長体（scaleX）の文字が幅を押し広げないように */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* 横に詰めた欧文（長体） */
+  .squeeze {
+    display: inline-block;
+    font-family: var(--font-latin);
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .logo {
+    color: inherit;
+    text-decoration: none;
+    font-size: 79px;
+    transform: scaleX(.29);
+    margin: 0;
+  }
+  .logo:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .section-head {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-weight: 400;
+  }
+  .section-head .en {
+    font-size: 59px;
+    transform: scaleX(.52);
+  }
+  .section-head .ja {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+  .section-head--first { margin-top: 27px; }
+  .section-head--second { margin-top: 62px; }
+
+  .panel {
+    width: 100%;
+    background: var(--panel);
+    border-radius: 27px;
+    margin-top: 13px;
+  }
+
+  /* カメラについて */
+  .camera {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    align-items: center;
+    column-gap: 26px;
+    padding: 16px 20px 16px 48px;
+    min-height: 84px;
+  }
+  .camera-icon { width: 46px; height: auto; fill: var(--ink); }
+  .camera__text {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.25;
+    min-width: 0;
+  }
+  .camera__text span { display: block; }
+  .camera__text span + span.gap { margin-top: 1.25em; }
+
+  /* 利用方法 */
+  .howto {
+    padding: 40px 35px 29px 55px;
+  }
+  .howto__main {
+    display: grid;
+    grid-template-columns: 106px 1fr;
+    column-gap: 16px;
+    align-items: start;
+  }
+  .howto__photo {
+    width: 106px;
+    height: auto;
+    aspect-ratio: 272 / 363;
+    object-fit: cover;
+    display: block;
+  }
+  .howto__body { min-width: 0; padding-top: 2px; }
+  .howto__title {
+    margin: 0 0 0 15px;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  .tips {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0 0 0 21px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .tips li {
+    position: relative;
+    padding-left: 21px;
+  }
+  .tips li::before {
+    content: "・";
+    position: absolute;
+    left: 0;
+  }
+  .tips small {
+    font-size: 11px;
+    color: var(--ink-sub);
+    letter-spacing: -.02em;
+  }
+
+  .fineprint {
+    margin: 21px 0 0;
+    font-size: 12px;
+    line-height: 1.3;
+    text-align: center;
+  }
+  .fineprint + .fineprint { margin-top: 15px; }
+
+  /* ボタン */
+  .actions {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 23px;
+  }
+  .cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(532px, 100%);
+    height: 71px;
+    border-radius: 999px;
+    background: var(--btn);
+    color: var(--btn-ink);
+    text-decoration: none;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+  .cta .squeeze { font-size: 53px; transform: scaleX(.6); }
+  .cta:hover { transform: scale(1.02); opacity: .88; }
+  .cta:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  .back {
+    margin-top: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    font-family: var(--font-latin);
+    font-size: 35px;
+    line-height: 1.1;
+    display: inline-block;
+    transform: scaleX(.744);
+  }
+  .back:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+  .back:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+  /* 注釈レイヤー（確認用） */
+  .note-toggle {
+    position: fixed;
+    right: 12px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    z-index: 10;
+    font: 600 12px/1 var(--font-ja);
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--note);
+    background: var(--bg);
+    color: var(--note);
+    cursor: pointer;
+  }
+  .note-toggle[aria-pressed="true"] { background: var(--note); color: #fff; }
+  .note { display: none; }
+  .show-notes .note {
+    display: block;
+    font: 500 12px/1.45 var(--font-ja);
+    color: var(--note);
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  /* スマホ */
+  @media (max-width: 767px) {
+    body { padding-top: calc(36px + env(safe-area-inset-top, 0px)); padding-inline: 24px; }
+    .logo { font-size: 72px; }
+    .section-head .en { font-size: 52px; }
+    .section-head .ja { font-size: 16px; }
+    .section-head--first { margin-top: 24px; }
+    .section-head--second { margin-top: 48px; }
+    .panel { border-radius: 24px; }
+    .camera {
+      grid-template-columns: 40px 1fr;
+      column-gap: 16px;
+      padding: 20px;
+    }
+    .camera-icon { width: 40px; }
+    .camera__text { font-size: 13px; line-height: 1.6; }
+    .howto { padding: 24px 20px; }
+    .howto__main { grid-template-columns: 1fr; row-gap: 18px; }
+    .howto__photo { width: 120px; margin-inline: auto; }
+    .howto__title { margin: 0; font-size: 18px; text-align: center; }
+    .tips { padding-left: 0; font-size: 14px; }
+    .tips li { padding-left: 18px; }
+    .tips li + li { margin-top: 6px; }
+    .tips small { display: block; font-size: 12px; }
+    .fineprint { font-size: 12px; line-height: 1.6; }
+    .cta { height: 56px; max-width: 420px; }
+    .cta .squeeze { font-size: 34px; }
+    .back { font-size: 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta { transition: none; }
+    .cta:hover { transform: none; }
+  }
+</style>
+<script>
+  // ページを開いたら必ず一番上から表示する（前のページのスクロール位置を引き継がない）
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  function toTop() { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body && (document.body.scrollTop = 0); }
+  toTop();
+  window.addEventListener('DOMContentLoaded', toTop);
+  window.addEventListener('load', () => { toTop(); requestAnimationFrame(toTop); });
+  window.addEventListener('pageshow', toTop);
+</script>
+</head>
+<body>
+<main class="page" id="page">
+
+  <a class="logo squeeze" href="index.html" aria-label="WEAR'EM トップへ">WEAR’EM</a>
+
+  <h1 class="section-head section-head--first">
+    <span class="en squeeze">BEFORE YOU TRY-ON</span>
+    <span class="ja">ご試着の前に</span>
+  </h1>
+
+  <section class="panel camera" aria-label="カメラについて">
+    <svg class="camera-icon" viewBox="656 374 63 49" aria-hidden="true"><path d="M706.4,394.22c1.77,0,3.21-1.450,3.21-3.18s-1.45-3.21-3.21-3.21-3.18,1.45-3.18,3.21,1.45,3.18,3.18,3.18ZM664.6,422.95h46.07c5.46,0,8.19-2.7,8.19-8.1v-26.28c0-5.4-2.730-8.06-8.19-8.06h-7.1c-1.96,0-2.57-.48-3.66-1.67l-1.96-2.22c-1.25-1.35-2.6-2.18-5.24-2.18h-10.18c-2.67,0-4.02.84-5.24,2.18l-1.99,2.22c-1.06,1.19-1.7,1.67-3.63,1.67h-7.07c-5.46,0-8.19,2.67-8.19,8.06v26.28c0,5.4,2.73,8.1,8.19,8.1ZM664.67,418.29c-2.31,0-3.63-1.22-3.630-3.66v-25.8c0-2.44,1.32-3.69,3.63-3.69h8.22c2.25,0,3.5-.48,4.75-1.86l1.9-2.15c1.45-1.61,2.18-2.06,4.5-2.06h7.13c2.31,0,3.05.45,4.5,2.06l1.93,2.15c1.22,1.38,2.51,1.86,4.75,1.86h8.26c2.28,0,3.6,1.25,3.6,3.69v25.8c0,2.44-1.32,3.66-3.6,3.66h-45.94ZM687.64,414.95c7.58,0,13.65-6.07,13.65-13.72s-6.07-13.69-13.65-13.69-13.69,6.07-13.690,13.69,6.1,13.72,13.69,13.72ZM687.64,410.61c-5.14,0-9.38-4.18-9.38-9.38s4.21-9.35,9.38-9.35,9.35,4.14,9.35,9.35-4.18,9.38-9.35,9.38Z"/></svg>
+    <p class="camera__text">
+      <span>試着にはカメラを使用します。</span>
+      <span>次の画面でブラウザからカメラの使用許可を求められたら「許可」を選んでください。</span>
+      <span class="gap">映像は端末内でのみ処理され、外部に送信・保存されることはありません。</span>
+    </p>
+  </section>
+
+  <h2 class="section-head section-head--second">
+    <span class="en squeeze">HOW TO</span>
+    <span class="ja">利用方法</span>
+  </h2>
+
+  <section class="panel howto" aria-labelledby="tipsTitle">
+    <div class="howto__main">
+      <img class="howto__photo" src="assets/ear-howto.webp" alt="髪を耳にかけて、耳全体が見えている横顔の例" width="272" height="363">
+      <div class="howto__body">
+        <h3 class="howto__title" id="tipsTitle">うまく試着するためのコツ</h3>
+        <ul class="tips">
+          <li>髪を耳にかける<small>：髪で耳が隠れると、正しく検出できません</small></li>
+          <li>顔を少し横に向ける<small>：試着したい耳がカメラに映るように</small></li>
+          <li>明るい場所で<small>：逆光は避けてください</small></li>
+          <li>カメラから30〜50cmくらい離れる<small>：耳全体が画面に収まる距離</small></li>
+          <li>帽子やイヤホンを外す</li>
+        </ul>
+      </div>
+    </div>
+    <p class="fineprint">表示はあくまでイメージです。<br>実際のサイズ感や色味は、照明や画面によって異なる場合があります。</p>
+    <p class="fineprint">推奨ブラウザ：Safari／Chrome（最新版）<br>カメラ付きのスマートフォン・PCでご利用ください。</p>
+  </section>
+
+  <div class="actions">
+    <a class="cta" href="03-tryon.html"><span class="squeeze">START TRY-ON</span></a>
+    <span class="note">【クリック】試着画面（03-tryon）に移動</span>
+    <a class="back" href="index.html">back to top</a>
+    <span class="note">【クリック】トップ画面（01-top / index.html）に移動</span>
+  </div>
+</main>
+
+<button class="note-toggle" id="noteToggle" type="button" aria-pressed="false">注釈を表示</button>
+
+<script>
+  (function () {
+    const btn = document.getElementById('noteToggle');
+    const page = document.getElementById('page');
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      btn.textContent = on ? '注釈を隠す' : '注釈を表示';
+      page.classList.toggle('show-notes', on);
+    });
+  })();
+</script>
+</body>
+</html>
